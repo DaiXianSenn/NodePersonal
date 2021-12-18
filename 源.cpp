@@ -1,24 +1,12 @@
 #include"iostream"
 using namespace std;
-#define MAXNUMBER 100;
-int num[100] = { 0 };
-
 //二叉树结构定义
 struct node {
 	char data;
 	node* lchild, * rchild;
 };
-
-void Traverse(node* t) {
-	if (t == NULL) {
-		return;
-	}
-	Traverse(t->lchild);
-	cout << t->data;
-	Traverse(t->rchild);
-}
-//先序遍历二叉树创建
-void SetBiTree(node*& t/*代表一个指针的别名*/){
+//先序遍历创建二叉树 （注意形参列的取地址符）
+void SetBiTree(node* &t) {
 	char c;
 	cin >> c;
 	if (c == '#') {
@@ -30,41 +18,37 @@ void SetBiTree(node*& t/*代表一个指针的别名*/){
 		SetBiTree(t->lchild);
 		SetBiTree(t->rchild);
 	}
-	
 }
-void Levcount(node*& t,int L) {
-	
-	if (t) {
-		if ((t->lchild != NULL && t->rchild == NULL)|| (t->lchild == NULL && t->rchild != NULL)) {
-			num[L]++; 
-		}
-
-
-		Levcount(t->lchild, L + 1);
-		Levcount(t->rchild, L + 1);
+//中序遍历 遍历二叉树
+void Traverse(node* t) {
+	if (t==NULL) {
+		return;
 	}
-	
-	
+	Traverse(t->lchild);
+	cout << t->data;
+	Traverse(t->rchild);
 }
-int GetDepth(node* &t) {
-	if (!t) {
-		return 0;
+//交换左右字数，递归函数实现
+void change(node*& t) {
+	if (t->lchild == NULL && t->rchild == NULL) {
+		return;
 	}
-	int ld = GetDepth(t->lchild);
-	int rd = GetDepth(t->rchild);
-	return max(ld, rd) + 1;
+	node* temp;
+	temp = t->lchild;
+	t->lchild = t->rchild;
+	t->rchild = temp;
+	if (t->lchild) {
+		change(t->lchild);
+	}
+	if (t->rchild) {
+		change(t->rchild);
+	}
 }
-
 int main() {
 	node* root;
 	SetBiTree(root);
-	Levcount(root, 1);
-	int k;
-	k = GetDepth(root);
-	for (int i = 1; i <= k; i++)
-	{
-
-		cout << num[i] << endl;
-
-	}
+	Traverse(root);
+	cout << endl;
+	change(root);
+	Traverse(root);
 }
